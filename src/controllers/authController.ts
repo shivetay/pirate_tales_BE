@@ -16,6 +16,7 @@ export const signUp = async (
 			return next(new AppError("Please provide all fields", 400));
 		}
 
+		// TODO compare passwords securely
 		if (password !== password_confirm) {
 			return next(new AppError("Passwords do not match", 400));
 		}
