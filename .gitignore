@@ -1,3 +1,8 @@
 /node_modules
-dev.env
+
 .env
+dev.env
+prod.env
+
+#Ignore cursor AI rules
+.cursor\rules\codacy.mdc
