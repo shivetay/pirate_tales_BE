@@ -98,7 +98,8 @@ userSchema.pre('save', function (next) {
 // Password compare and hash
 userSchema.pre('save', async function (next) {
 	if (!this.isModified('password')) {
-		return next();
+		next();
+		return;
 	}
 
 	try {
