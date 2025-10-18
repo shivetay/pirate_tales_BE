@@ -1,6 +1,6 @@
-import type { NextFunction, Request, Response } from "express";
-import { User } from "../models";
-import { AppError } from "../utils";
+import type { NextFunction, Request, Response } from 'express';
+import { User } from '../models';
+import { AppError } from '../utils';
 
 // GET All users
 export const getAllUsers = async (
@@ -12,7 +12,7 @@ export const getAllUsers = async (
 		const users = await User.find();
 
 		res.status(200).json({
-			status: "success",
+			status: 'success',
 			results: users.length,
 			data: {
 				users,
@@ -35,11 +35,12 @@ export const getUserById = async (
 		const user = await User.findById(id);
 
 		if (!user) {
-			return next(new AppError("User not found", 404));
+			next(new AppError('User not found', 404));
+			return;
 		}
 
 		res.status(200).json({
-			status: "success",
+			status: 'success',
 			data: {
 				user,
 			},

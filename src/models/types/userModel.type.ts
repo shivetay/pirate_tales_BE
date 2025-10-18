@@ -1,4 +1,4 @@
-import type { Document } from "mongoose";
+import type { Document } from 'mongoose';
 
 export interface IUserSchema extends Document {
 	user_name: string;
@@ -16,5 +16,8 @@ export interface IUserSchema extends Document {
 	last_resource_update: Date;
 	created_at: Date;
 	updated_at: Date;
-	comparePassword(candidatePassword: string, userPassword: string): boolean;
+	comparePassword(
+		candidatePassword: string,
+		userPassword: string,
+	): Promise<boolean>;
 }
