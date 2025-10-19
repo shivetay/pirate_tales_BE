@@ -3,7 +3,7 @@ import express from 'express';
 import { xss } from 'express-xss-sanitizer';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { userRoutes } from './routes';
+import { authRoutes, userRoutes } from './routes';
 
 const app = express();
 
@@ -22,5 +22,6 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 export default app;
