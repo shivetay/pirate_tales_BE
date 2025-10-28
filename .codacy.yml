@@ -1,0 +1,24 @@
+# Codacy configuration file
+# This file allows you to configure which issues Codacy should ignore
+
+# Ignore specific patterns or rules
+ignore:
+  # Ignore "Returning a void expression from a function is forbidden" rule globally
+  - rule: "no-void-expression"
+  
+  # Example: Ignore all issues in a specific file
+  # - file: "src/controllers/userController.ts"
+  
+  # Example: Ignore specific rules in specific files
+  # - file: "src/controllers/userController.ts"
+  #   rule: "RuleName"
+  
+  # Example: Ignore issues on specific lines
+  # - file: "src/controllers/userController.ts"
+  #   line: 37
+  #   rule: "RuleName"
+
+# You can also use patterns to ignore multiple files
+# ignore:
+#   - file: "**/*.test.ts"
+#   - file: "**/node_modules/**"
