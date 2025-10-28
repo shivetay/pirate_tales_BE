@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
+const DEFAULT_PORT = 3003;
 // Load environment variables based on NODE_ENV
 const envFile =
   process.env.NODE_ENV === 'production' ? './prod.env' : './dev.env';
@@ -9,7 +10,7 @@ dotenv.config({ path: envFile });
 // Import app after environment variables are loaded
 import app from './app';
 
-const PORT = process.env.PORT || 3003;
+const PORT = process.env.PORT || DEFAULT_PORT;
 
 // DB connection
 

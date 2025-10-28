@@ -10,7 +10,6 @@ export const getAllUsers = async (
 ) => {
   try {
     const users = await User.find();
-    console.log(users);
     res.status(200).json({
       status: 'success',
       results: users.length,

@@ -11,6 +11,7 @@ import { AppError } from './utils';
 const app = express();
 // Middleware
 
+app.use(helmet());
 if (process.env.NODE_ENV === 'development') {
   // biome-ignore lint/suspicious/noConsole: console log for development mode
   console.log('Development mode');
@@ -19,14 +20,11 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('tiny'));
 }
 
-app.use(helmet());
 app.use(cors());
-
 app.use(xss());
 
 // Body parsing middleware
 app.use(express.json({ limit: '10kb' }));
-console.log(process.env.NODE_ENV);
 
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/auth', authRoutes);
