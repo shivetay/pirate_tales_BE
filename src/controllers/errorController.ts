@@ -34,7 +34,7 @@ const sendErrorProd = (err: CustomError, res: Response) => {
     // 2) Send generic message
     res.status(500).json({
       status: 'error',
-      message: 'Something went very wrong!',
+      message: 'GENERAL_ERROR',
     });
   }
 };
@@ -46,7 +46,7 @@ export const errorController = (
   _next: NextFunction,
 ) => {
   res.setHeader('Content-Type', 'application/json');
-  console.log(err);
+
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 

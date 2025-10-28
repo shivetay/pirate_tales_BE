@@ -10,7 +10,7 @@ dotenv.config({ path: envFile });
 // Import app after environment variables are loaded
 import app from './app';
 
-const PORT = process.env.PORT || DEFAULT_PORT;
+const PORT = process.env.PORT || 3003;
 
 // DB connection
 

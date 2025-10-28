@@ -72,11 +72,13 @@ export const signUp = async (
     const userCheck = await User.findOne({ email, user_name });
 
     if (!email || !user_name || !password || !password_confirm) {
-      return next(new AppError('Please provide all fields', 400));
+      next(new AppError('AUTH_ERROR_PROVIDE_ALL_FIELDS', 400));
+      return;
     }
 
     if (userCheck) {
-      return next(new AppError('User already exists', 409));
+      next(new AppError('AUTH_ERROR_USER_ALREADY_EXISTS', 409));
+      return;
     }
 
     const newUser = await User.create({
@@ -101,19 +103,22 @@ export const signIn = async (
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new AppError('Please provide all fields', 400));
+      next(new AppError('AUTH_ERROR_PROVIDE_ALL_FIELDS', 400));
+      return;
     }
 
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
-      return next(new AppError('User not found', 404));
+      next(new AppError('AUTH_ERROR_USER_NOT_FOUND', 404));
+      return;
     }
 
     const isPasswordMatch = await user.comparePassword(password, user.password);
 
     if (!user || !isPasswordMatch) {
-      return next(new AppError('Invalid email or password', 401));
+      next(new AppError('AUTH_ERROR_INVALID_CREDENTIALS', 401));
+      return;
     }
 
     createSendToken(user, 200, res, true, next);

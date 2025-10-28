@@ -34,7 +34,8 @@ export const getUserById = async (
     const user = await User.findById(id);
 
     if (!user) {
-      return next(new AppError('User not found', 404));
+      next(new AppError('AUTH_ERROR_USER_NOT_FOUND', 404));
+      return;
     }
 
     res.status(200).json({
