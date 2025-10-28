@@ -6,118 +6,118 @@ import { AppError } from '../utils';
 
 // Creates JWT token
 const signToken = (user_id: string) => {
-	const secret = process.env.JWT_SECRET;
-	const expiresIn = process.env.JWT_EXPIRES_IN;
-	if (!secret || !expiresIn) {
-		throw new Error('Oops something went wrong');
-	}
-	return jwt.sign({ user_id }, secret, {
-		expiresIn: parseInt(expiresIn, 10),
-		algorithm: 'HS256',
-		issuer: 'pirate_tales_be',
-	});
+  const secret = process.env.JWT_SECRET;
+  const expiresIn = process.env.JWT_EXPIRES_IN;
+  if (!secret || !expiresIn) {
+    throw new AppError('Server configuration error', 500);
+  }
+  return jwt.sign({ user_id }, secret, {
+    expiresIn: parseInt(expiresIn, 10),
+    algorithm: 'HS256',
+    issuer: 'pirate_tales_be',
+  });
 };
 
 // Creates send token for response
 const createSendToken = (
-	user: Omit<
-		IUserSchema,
-		| 'password'
-		| 'password_confirm'
-		| 'password_changed_at'
-		| 'password_reset_token'
-		| 'password_reset_expires'
-	>,
-	statusCode: number,
-	res: Response,
-	isLogin: boolean,
+  user: Omit<
+    IUserSchema,
+    | 'password'
+    | 'password_confirm'
+    | 'password_changed_at'
+    | 'password_reset_token'
+    | 'password_reset_expires'
+  >,
+  statusCode: number,
+  res: Response,
+  isLogin: boolean,
+  next: NextFunction,
 ) => {
-	const token = signToken(user.id);
-	const cookieExpiresIn = process.env.JWT_COOKIE_EXPIRES_IN;
-	if (!cookieExpiresIn) {
-		throw new Error('Oops something went wrong');
-	}
-	const cookieOptions = {
-		expires: new Date(
-			Date.now() + parseInt(cookieExpiresIn, 10) * 24 * 60 * 60 * 1000,
-		),
-		httpOnly: true,
-		secure: process.env.NODE_ENV === 'production',
-		sameSite: 'strict' as const,
-		path: '/',
-	};
+  try {
+    const token = signToken(user.id);
+    const cookieExpiresIn = process.env.JWT_COOKIE_EXPIRES_IN;
+    if (!cookieExpiresIn) {
+      throw new AppError('Server configuration error', 500);
+    }
+    const cookieOptions = {
+      expires: new Date(
+        Date.now() + parseInt(cookieExpiresIn, 10) * 24 * 60 * 60 * 1000,
+      ),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict' as const,
+      path: '/',
+    };
 
-	res.cookie('jwt', token, cookieOptions);
+    res.cookie('jwt', token, cookieOptions);
 
-	res.status(statusCode).json({
-		status: 'success',
-		token,
-		message: isLogin ? 'Login successful' : 'Registration successful',
-	});
+    res.status(statusCode).json({
+      status: 'success',
+      token,
+      message: isLogin ? 'Login successful' : 'Registration successful',
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const signUp = async (
-	req: Request,
-	res: Response,
-	next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
-	try {
-		const { email, user_name, password, password_confirm } = req.body;
+  try {
+    const { email, user_name, password, password_confirm } = req.body;
 
-		const userCheck = await User.findOne({ email, user_name });
+    const userCheck = await User.findOne({ email, user_name });
 
-		if (!email || !user_name || !password || !password_confirm) {
-			next(new AppError('Please provide all fields', 400));
-			return;
-		}
+    if (!email || !user_name || !password || !password_confirm) {
+      return next(new AppError('Please provide all fields', 400));
+    }
 
-		if (userCheck) {
-			next(new AppError('User already exists', 409));
-			return;
-		}
+    if (userCheck) {
+      return next(new AppError('User already exists', 409));
+    }
 
-		const newUser = await User.create({
-			email,
-			user_name,
-			password,
-			password_confirm,
-		});
+    const newUser = await User.create({
+      email,
+      user_name,
+      password,
+      password_confirm,
+    });
 
-		createSendToken(newUser, 201, res, false);
-	} catch (error) {
-		next(error);
-	}
+    createSendToken(newUser, 201, res, false, next);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const signIn = async (
-	req: Request,
-	res: Response,
-	next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
-	try {
-		const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-		if (!email || !password) {
-			next(new AppError('Please provide all fields', 400));
-			return;
-		}
+    if (!email || !password) {
+      return next(new AppError('Please provide all fields', 400));
+    }
 
-		const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select('+password');
 
-		if (!user) {
-			next(new AppError('User not found', 404));
-			return;
-		}
+    if (!user) {
+      return next(new AppError('User not found', 404));
+    }
 
-		const isPasswordMatch = await user.comparePassword(password, user.password);
+    const isPasswordMatch = await user.comparePassword(password, user.password);
 
-		if (!user || !isPasswordMatch) {
-			next(new AppError('Invalid email or password', 401));
-			return;
-		}
+    if (!user || !isPasswordMatch) {
+      return next(new AppError('Invalid email or password', 401));
+    }
 
-		createSendToken(user, 200, res, true);
-	} catch (error) {
-		next(error);
-	}
+    createSendToken(user, 200, res, true, next);
+  } catch (error) {
+    next(error);
+  }
 };
