@@ -6,17 +6,19 @@ ignore:
   # Ignore "Returning a void expression from a function is forbidden" rule globally
   - rule: "no-void-expression"
   
-  # Example: Ignore all issues in a specific file
-  # - file: "src/controllers/userController.ts"
+  # Alternative rule names that might be used by different tools
+  - rule: "no-void-return"
+  - rule: "no-return-void"
+  - rule: "void-return"
+  - rule: "no-unnecessary-return"
   
-  # Example: Ignore specific rules in specific files
-  # - file: "src/controllers/userController.ts"
-  #   rule: "RuleName"
+  # Ignore this specific pattern in authController.ts
+  - file: "src/controllers/authController.ts"
+    rule: "no-void-expression"
   
-  # Example: Ignore issues on specific lines
-  # - file: "src/controllers/userController.ts"
-  #   line: 37
-  #   rule: "RuleName"
+  # Ignore this specific pattern in userController.ts
+  - file: "src/controllers/userController.ts"
+    rule: "no-void-expression"
 
 # You can also use patterns to ignore multiple files
 # ignore:
