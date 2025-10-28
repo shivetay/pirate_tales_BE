@@ -2,7 +2,9 @@ import type { NextFunction, Request, Response } from 'express';
 import { AppError, type CustomError } from '../utils';
 
 const handleCastErrorDB = (err: CustomError) => {
-  const message = `Invalid ${err.path}: ${err.value}.`;
+  const path = err.path || 'field';
+  const value = err.value !== undefined ? String(err.value) : 'undefined';
+  const message = `Invalid ${path}: ${value}.`;
   return new AppError(message, 400);
 };
 
@@ -10,7 +12,7 @@ const handleJWTError = () =>
   new AppError('Invalid token. Please log in again!', 401);
 
 const sendErrorDev = (err: CustomError, res: Response) => {
-  res.status(err?.statusCode || 500).json({
+  res.status(err.statusCode || 500).json({
     status: err.status,
     error: err,
     message: err.message,
@@ -21,7 +23,7 @@ const sendErrorDev = (err: CustomError, res: Response) => {
 const sendErrorProd = (err: CustomError, res: Response) => {
   // Operational, trusted error: send message to client
   if (err.isOperational) {
-    res.status(err?.statusCode || 500).json({
+    res.status(err.statusCode || 500).json({
       status: err.status,
       message: err.message,
     });
